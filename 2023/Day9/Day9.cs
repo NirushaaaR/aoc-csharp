@@ -13,7 +13,7 @@ class Day9(string inputName = "input.txt") : BaseDay(2023, 9, inputName)
 				List<int> differences = [];
 				bool allDiffIsZeros = true;
 				var nums = sequences.Last();
-				for (int i = 1; i < sequences.Last().Length; i++)
+				for (int i = 1; i < nums.Length; i++)
 				{
 					int diff = nums[i] - nums[i - 1];
 					differences.Add(diff);
@@ -52,7 +52,7 @@ class Day9(string inputName = "input.txt") : BaseDay(2023, 9, inputName)
 				List<int> differences = [];
 				bool allDiffIsZeros = true;
 				var nums = sequences.Last();
-				for (int i = 1; i < sequences.Last().Length; i++)
+				for (int i = 1; i < nums.Length; i++)
 				{
 					int diff = nums[i] - nums[i - 1];
 					differences.Add(diff);
