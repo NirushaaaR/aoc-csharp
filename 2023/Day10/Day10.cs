@@ -181,6 +181,7 @@ class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 		int distance = 0;
 		i = iStart;
 		j = jStart;
+		Direction startDirection = Direction.TOP;
 		Direction comeFrom = Direction.TOP;
 		do
 		{
@@ -192,21 +193,25 @@ class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 				if (i - 1 > 0 && "|F7".Contains(inputs[i - 1][j]))
 				{
 					i--;
+					startDirection = Direction.TOP;
 					comeFrom = Direction.DOWN;
 				}
 				else if (i + 1 < rowSize && "|LJ".Contains(inputs[i + 1][j]))
 				{
 					i++;
+					startDirection = Direction.DOWN;
 					comeFrom = Direction.TOP;
 				}
 				else if (j - 1 > 0 && "-LF".Contains(inputs[i][j - 1]))
 				{
 					j--;
+					startDirection = Direction.LEFT;
 					comeFrom = Direction.RIGHT;
 				}
 				else if (j + 1 < colSize && "-7J".Contains(inputs[i][j + 1]))
 				{
 					j++;
+					startDirection = Direction.RIGHT;
 					comeFrom = Direction.LEFT;
 				}
 			}
@@ -287,6 +292,21 @@ class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 			distance++;
 		} while (i != iStart || j != jStart);
 
+		// possible s value
+		// start/end top down left right
+		// top		 'x' '|'   'J' 'L' 
+		// down      '|' 'x'   '7' 'F'
+		// left      'J' '7'   'x' '-'
+		// right     'L' 'F'   '-' 'x'
+		char[,] possibleS = new char[,]{
+			{'x', '|', 'J', 'L',},
+			{'|', 'x', '7', 'F',},
+			{'J', '7', 'x', '-',},
+			{'L', 'F', '-', 'x',},
+		};
+		var sRealValue = possibleS[(int)startDirection, (int)comeFrom];
+
+
 		// do a raycasting??
 		// horizontally
 		int verticesInsideLoop = 0;
@@ -300,6 +320,10 @@ class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 				{
 					// valid wall is just '|', 'L7', 'FJ'
 					char pipe = inputs[i][j];
+					if (pipe == 'S') {
+						pipe = sRealValue;
+					}
+
 					if (pipe == '|')
 					{
 						wallCrossing++;
