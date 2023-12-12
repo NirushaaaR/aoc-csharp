@@ -8,7 +8,7 @@ var q = from t in Assembly.GetExecutingAssembly().GetTypes()
 
 var BaseDayList = q.ToList();
 
-BaseDayList.Sort((x, y) => -x.Name.CompareTo(y.Name));
+BaseDayList.Sort((x, y) => ((BaseDay)Activator.CreateInstance(y, ["input.txt"]))!.day - ((BaseDay)Activator.CreateInstance(x, ["input.txt"]))!.day);
 
 // foreach (var type in BaseDayList)
 // {
