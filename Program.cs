@@ -1,19 +1,19 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
 
-const string namespaceName = "AOC.Y2023";
+int argsLength = args.Length;
+Debug.Assert(argsLength == 2 || argsLength == 3, "plase run: dotnet run [YYYY] [D] [inputFileName (optional default is input.txt)]");
+string year = args[0];
+string day = args[1];
+string className = $"AOC.Y{year}.Day{day}";
 
-var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-        where t.IsClass && t.Namespace == namespaceName && t.BaseType?.Name == "BaseDay"
-        select t;
+Type? type = Type.GetType(className);
+Debug.Assert(type != null, $"className {className} is not valid!");
 
-var BaseDayList = q.ToList();
-
-BaseDayList.Sort((x, y) => ((BaseDay)Activator.CreateInstance(y, ["input.txt"]))!.day - ((BaseDay)Activator.CreateInstance(x, ["input.txt"]))!.day);
-
-// foreach (var type in BaseDayList)
-// {
-//     Solver.Solve((BaseDay)Activator.CreateInstance(type, ["input.txt"])!);
-// }
-
-Solver.Solve((BaseDay)Activator.CreateInstance(BaseDayList[0], ["input.txt"])!);
-
+if (argsLength == 2)
+{
+        Solver.Solve((BaseDay)Activator.CreateInstance(type, ["input.txt"])!);
+}
+else
+{
+        Solver.Solve((BaseDay)Activator.CreateInstance(type, [args[2]])!);
+}

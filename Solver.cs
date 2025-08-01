@@ -9,15 +9,14 @@ class Solver
         var answer = day.Solve1();
         stopWatch.Stop();
         TimeSpan ts = stopWatch.Elapsed;
-        Console.Write(string.Format("Day{0} Part1: {1}, ", day.day, answer));
-        Console.WriteLine("RunTime " + ts.TotalMilliseconds + "ms");
+        Console.Write($"Day{day.day} Part1: {answer}, ");
+        Console.WriteLine($"RunTime {ts.TotalMilliseconds} ms");
 
         stopWatch.Restart();
         answer = day.Solve2();
         stopWatch.Stop();
         ts = stopWatch.Elapsed;
-        Console.Write(string.Format("Day{0} Part2: {1}, ", day.day, answer));
-        Console.WriteLine("RunTime " + ts.TotalMilliseconds + "ms");
-        Console.WriteLine("=====================================\n");
+        Console.Write($"Day{day.day} Part2: {answer}, ");
+        Console.WriteLine($"RunTime {ts.TotalMilliseconds} ms");
     }
 }
