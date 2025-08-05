@@ -1,3 +1,5 @@
+namespace AOC;
+
 using System.Diagnostics;
 
 class Solver

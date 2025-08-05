@@ -1,3 +1,5 @@
+namespace AOC;
+
 class BaseDay(int year, int day, string inputName = "input.txt")
 {
     public int year = year;

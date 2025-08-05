@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AOC;
+using System.Diagnostics;
 
 int argsLength = args.Length;
 Debug.Assert(argsLength == 2 || argsLength == 3, "plase run: dotnet run [YYYY] [D] [inputFileName (optional default is input.txt)]");
