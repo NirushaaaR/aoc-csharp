@@ -5,8 +5,9 @@ using System.Text;
 
 class Day12(string inputName = "input.txt") : BaseDay(2023, 12, inputName)
 {
+	readonly Dictionary<string, double> answerCache = [];
 
-	Tuple<string, List<int>> ParseInput(string input)
+	static Tuple<string, List<int>> ParseInput(string input)
 	{
 		string[] arg = input.Split(" ");
 		List<int> pattern = [];
@@ -14,70 +15,111 @@ class Day12(string inputName = "input.txt") : BaseDay(2023, 12, inputName)
 		{
 			pattern.Add(int.Parse(p));
 		}
-		return Tuple.Create(arg[0], pattern);	
+		return Tuple.Create(arg[0], pattern);
 	}
 
-	bool isRowValidPattern(string row, List<int> pattern)
+	static Tuple<string, List<int>> ParseInput2(string input)
 	{
-		int countSharp = 0;
-		int i = 0;
-		foreach (char c in row)
+		var (row, _pattern) = ParseInput(input);
+		List<int> pattern = [.. _pattern];
+		StringBuilder sb = new(row);
+		for (int i = 0; i < 4; i++)
 		{
-			if (c == '#')
-			{
-				countSharp++;
-			}
-			else if (countSharp > 0)
-			{
-				if (i+1 > pattern.Count)
-				{
-					return false;
-				}
-				if (pattern[i] != countSharp)
-				{
-					return false;
-				}
-				countSharp = 0;
-				i++;
-			}
+			sb.Append("?" + row);
+			pattern.AddRange(_pattern);
 		}
-		return i + 1 >= pattern.Count;
+		return Tuple.Create(sb.ToString(), pattern);
 	}
 
-	double RecursiveSolve(string row, int currentIndex, List<int> pattern)
+	double RecursiveSolve(string records, List<int> springs)
 	{
-		if (currentIndex >= row.Length)
+		if (records == "")
 		{
-			return isRowValidPattern(row.ToString(), pattern) ? 1 : 0;
+			return springs.Count == 0 ? 1 : 0;
 		}
 
-		if (row[currentIndex] == '?')
+		if (springs.Count == 0)
 		{
-			StringBuilder sb = new(row);
-			sb[currentIndex] = '.';
-			double resultDot = RecursiveSolve(sb.ToString(), currentIndex + 1, pattern);
-			sb[currentIndex] = '#';
-			double resultHash = RecursiveSolve(sb.ToString(), currentIndex + 1, pattern);
-			return resultDot + resultHash;
+			return !records.Contains('#') ? 1 : 0;
 		}
 
-		return RecursiveSolve(row, currentIndex + 1, pattern);
+		char record = records[0];
+
+		if (record == '.')
+		{
+			// ignore until next # or ?
+			return RecursiveSolve(records[1..], springs);
+		}
+
+		// get the cached answer if already calculate this parts
+		string cacheKey = records + "|" + string.Join(",", springs);
+		if (answerCache.TryGetValue(cacheKey, out double result))
+		{
+			Console.WriteLine("Cache Hit!");
+			Utils.PrintDict(answerCache);
+			return result;
+		}
+
+		if (record == '#')
+		{
+			// count # if it's the same with current number of spring
+			int spring = springs.First();
+			result = 0;
+			if (
+				records.Length >= spring // current length is long enough for spring
+				&& !records[..spring].Contains('.') // no . in between
+				&& (
+					records.Length == spring // at the ends of record
+					|| records[spring] != '#' // next character is not spring
+				)
+			)
+			{
+				if (records.Length > spring)
+				{
+					result = RecursiveSolve(records[(spring + 1)..], springs[1..]);
+				}
+				else
+				{
+					result = RecursiveSolve("", springs[1..]);
+				}
+			}
+			answerCache[cacheKey] = result;
+			return result;
+		}
+
+		if (record == '?')
+		{
+			result = RecursiveSolve('.' + records[1..], springs) + RecursiveSolve('#' + records[1..], springs);
+			answerCache[cacheKey] = result;
+			return result;
+		}
+
+		// should not reach here...
+		throw new Exception($"unhandle record: {record}");
 	}
-
 
 	public override double Solve1()
 	{
+		List<double> answer = [];
 		foreach (var input in inputs)
 		{
 			var (row, pattern) = ParseInput(input);
-			Console.WriteLine(RecursiveSolve(row, 0, pattern));
+			answerCache.Clear();
+			answer.Add(RecursiveSolve(row, pattern));
 		}
-		return 0;
+		return answer.Sum();
 	}
 
 	public override double Solve2()
 	{
-		return 0;
+		List<double> answer = [];
+		foreach (var input in inputs)
+		{
+			var (row, pattern) = ParseInput2(input);
+			answerCache.Clear();
+			answer.Add(RecursiveSolve(row, pattern));
+		}
+		return answer.Sum();
 	}
 
 }
