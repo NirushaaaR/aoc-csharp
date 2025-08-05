@@ -74,14 +74,7 @@ class Day12(string inputName = "input.txt") : BaseDay(2023, 12, inputName)
 				)
 			)
 			{
-				if (records.Length > spring)
-				{
-					result = RecursiveSolve(records[(spring + 1)..], springs[1..]);
-				}
-				else
-				{
-					result = RecursiveSolve("", springs[1..]);
-				}
+				result = RecursiveSolve(records.Length > spring ? records[(spring + 1)..] : "", springs[1..]);
 			}
 			answerCache[cacheKey] = result;
 			return result;
