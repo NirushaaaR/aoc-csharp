@@ -55,8 +55,6 @@ class Day12(string inputName = "input.txt") : BaseDay(2023, 12, inputName)
 		string cacheKey = records + "|" + string.Join(",", springs);
 		if (answerCache.TryGetValue(cacheKey, out double result))
 		{
-			Console.WriteLine("Cache Hit!");
-			Utils.PrintDict(answerCache);
 			return result;
 		}
 
