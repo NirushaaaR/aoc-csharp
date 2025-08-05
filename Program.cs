@@ -7,7 +7,7 @@ string year = args[0];
 string day = args[1];
 string className = $"AOC.Y{year}.Day{day}";
 
-Type? type = Type.GetType(className);
+Type type = Type.GetType(className);
 Debug.Assert(type != null, $"className {className} is not valid!");
 
 if (argsLength == 2)

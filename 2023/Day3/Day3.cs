@@ -68,7 +68,7 @@ class Day3(string inputName = "input.txt") : BaseDay(2023, 3, inputName)
                     // check neighbor
                     for (int k = j; k >= j - sb.Length - 1 && k >= 0; k--)
                     {
-                        string? key = null;
+                        string key = "";
                         if (inputs[i][k] == '*')
                         {
                             key = string.Format("{0},{1}", i, k);
@@ -82,9 +82,9 @@ class Day3(string inputName = "input.txt") : BaseDay(2023, 3, inputName)
                             key = string.Format("{0},{1}", i + 1, k);
                         }
 
-                        if (key != null)
+                        if (key != "")
                         {
-                            if (memGearParts.TryGetValue(key, out int[]? parts))
+                            if (memGearParts.TryGetValue(key, out int[] parts))
                             {
                                 if (parts[1] == 0)
                                 {
