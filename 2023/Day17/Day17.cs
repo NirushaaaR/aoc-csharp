@@ -71,11 +71,8 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 		return x >= 0 && x < rightBound && y >= 0 && y < bottomBound;
 	}
 
-	class CrucibleTraversingEnumerator(Crucible crucible, int[,] maps) : IEnumerable<Crucible>
+	class CrucibleTraversingEnumerator(Crucible crucible, int[,] maps, int minEnergy, int maxEnergy) : IEnumerable<Crucible>
 	{
-		private readonly int[,] maps = maps;
-		private readonly Crucible crucible = crucible;
-
 		public IEnumerator<Crucible> GetEnumerator()
 		{
 			if (crucible.energy > 0)
@@ -96,35 +93,39 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 				}
 			}
 
-			// turn 90 degree in either of the 2 direction? and reload energy
-			switch (crucible.direction)
+			if (maxEnergy - crucible.energy >= minEnergy)
 			{
-				case Direction.UP:
-				case Direction.DOWN:
-					var (x, y) = (crucible.x - 1, crucible.y);
-					if (IsValidPoint(x, y))
-					{
-						yield return new(x, y, crucible.heatLoss + maps[y, x], 2, Direction.LEFT);
-					}
-					(x, y) = (crucible.x + 1, crucible.y);
-					if (IsValidPoint(x, y))
-					{
-						yield return new(x, y, crucible.heatLoss + maps[y, x], 2, Direction.RIGHT);
-					}
-					break;
-				case Direction.LEFT:
-				case Direction.RIGHT:
-					(x, y) = (crucible.x, crucible.y - 1);
-					if (IsValidPoint(x, y))
-					{
-						yield return new(x, y, crucible.heatLoss + maps[y, x], 2, Direction.UP);
-					}
-					(x, y) = (crucible.x, crucible.y + 1);
-					if (IsValidPoint(x, y))
-					{
-						yield return new(x, y, crucible.heatLoss + maps[y, x], 2, Direction.DOWN);
-					}
-					break;
+				// can only turn if already using min amount of energy
+				// turn 90 degree in either of the 2 direction? and reload energy
+				switch (crucible.direction)
+				{
+					case Direction.UP:
+					case Direction.DOWN:
+						var (x, y) = (crucible.x - 1, crucible.y);
+						if (IsValidPoint(x, y))
+						{
+							yield return new(x, y, crucible.heatLoss + maps[y, x], maxEnergy-1, Direction.LEFT);
+						}
+						(x, y) = (crucible.x + 1, crucible.y);
+						if (IsValidPoint(x, y))
+						{
+							yield return new(x, y, crucible.heatLoss + maps[y, x], maxEnergy-1, Direction.RIGHT);
+						}
+						break;
+					case Direction.LEFT:
+					case Direction.RIGHT:
+						(x, y) = (crucible.x, crucible.y - 1);
+						if (IsValidPoint(x, y))
+						{
+							yield return new(x, y, crucible.heatLoss + maps[y, x], maxEnergy-1, Direction.UP);
+						}
+						(x, y) = (crucible.x, crucible.y + 1);
+						if (IsValidPoint(x, y))
+						{
+							yield return new(x, y, crucible.heatLoss + maps[y, x], maxEnergy-1, Direction.DOWN);
+						}
+						break;
+				}
 			}
 		}
 
@@ -134,18 +135,15 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 		}
 	}
 
-
-	public override double Solve1()
+	static int FindMinHeatLoss(int[,] maps, int minEnergy, int maxEnergy)
 	{
-		int[,] maps = ParseInput();
-
 		// use priority queue to ensure that crucibles with the min heatloss got moved first
 		PriorityQueue<Crucible, int> crucibles = new();
 		HashSet<(int, int, int, Direction)> visited = [];
 
 		// initialise
-		crucibles.Enqueue(new(0, 0, 0, 3, Direction.RIGHT), 0);
-		visited.Add((0, 0, 3, Direction.RIGHT));
+		crucibles.Enqueue(new(0, 0, 0, maxEnergy, Direction.RIGHT), 0);
+		visited.Add((0, 0, maxEnergy, Direction.RIGHT));
 		int minHeatLoss = int.MaxValue;
 		var endPoint = (rightBound - 1, bottomBound - 1);
 
@@ -153,7 +151,7 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 		{
 			Crucible crucible = crucibles.Dequeue();
 
-			foreach (Crucible nextCrucible in new CrucibleTraversingEnumerator(crucible, maps))
+			foreach (Crucible nextCrucible in new CrucibleTraversingEnumerator(crucible, maps, minEnergy, maxEnergy))
 			{
 				if (nextCrucible.heatLoss >= minHeatLoss)
 				{
@@ -172,6 +170,8 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 
 				if (visited.Contains(point))
 				{
+					// already visited this point with min heatLoss (because of priority queue)
+					// drop it....
 					continue;
 				}
 				visited.Add(point);
@@ -180,11 +180,19 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 				crucibles.Enqueue(nextCrucible, nextCrucible.heatLoss);
 			}
 		}
-		return minHeatLoss;
+		return minHeatLoss;	
+	}
+
+
+	public override double Solve1()
+	{
+		int[,] maps = ParseInput();
+		return FindMinHeatLoss(maps, 0, 3);
 	}
 
 	public override double Solve2()
 	{
-		return 0;
+		int[,] maps = ParseInput();
+		return FindMinHeatLoss(maps, 4, 10);
 	}
 }
