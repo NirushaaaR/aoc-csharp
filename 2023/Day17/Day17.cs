@@ -139,11 +139,11 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 	{
 		// use priority queue to ensure that crucibles with the min heatloss got moved first
 		PriorityQueue<Crucible, int> crucibles = new();
-		HashSet<(int, int, int, Direction)> visited = [];
+		HashSet<(int, int, Direction)> visited = [];
 
 		// initialise
 		crucibles.Enqueue(new(0, 0, 0, maxEnergy, Direction.RIGHT), 0);
-		visited.Add((0, 0, maxEnergy, Direction.RIGHT));
+		visited.Add((0, 0, Direction.RIGHT));
 		int minHeatLoss = int.MaxValue;
 		var endPoint = (rightBound - 1, bottomBound - 1);
 
@@ -159,7 +159,7 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 					continue;
 				}
 
-				var point = (nextCrucible.x, nextCrucible.y, nextCrucible.energy, nextCrucible.direction);
+				var point = (nextCrucible.x, nextCrucible.y, nextCrucible.direction);
 
 				if ((point.x, point.y) == endPoint)
 				{
