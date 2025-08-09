@@ -167,6 +167,7 @@ class Day17(string inputName = "input.txt") : BaseDay(2023, 17, inputName)
 				{
 					// reach the end!
 					minHeatLoss = Math.Min(minHeatLoss, nextCrucible.heatLoss);
+					continue;
 				}
 
 				if (visited.Contains(point))
