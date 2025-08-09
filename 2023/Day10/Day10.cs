@@ -1,15 +1,16 @@
 namespace AOC.Y2023;
 
-enum Direction
-{
-	TOP,
-	DOWN,
-	LEFT,
-	RIGHT
-}
-
 class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 {
+
+	enum Direction
+	{
+		TOP,
+		DOWN,
+		LEFT,
+		RIGHT
+	}
+
 	public override double Solve1()
 	{
 		int rowSize = inputs.Length;
@@ -320,7 +321,8 @@ class Day10(string inputName = "input.txt") : BaseDay(2023, 10, inputName)
 				{
 					// valid wall is just '|', 'L7', 'FJ'
 					char pipe = inputs[i][j];
-					if (pipe == 'S') {
+					if (pipe == 'S')
+					{
 						pipe = sRealValue;
 					}
 
